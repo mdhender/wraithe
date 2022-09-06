@@ -1,0 +1,8 @@
+= wraith
+
+Wraith is my implementation of Superior Simulations's `Empyrean Challenge`.
+
+Rules are reverse-engineered from the _Empyrean Challenge_ player's manual,
+(c) 1978 Vern Holford.
+
+All flaws are, quite naturally, mine.
