@@ -20,12 +20,17 @@
 package cli
 
 import (
+	"github.com/go-chi/chi/v5"
+	"github.com/go-chi/chi/v5/middleware"
+	html "github.com/mdhender/wraithe/handlers/html"
+	rest "github.com/mdhender/wraithe/handlers/rest"
 	"github.com/mdhender/wraithe/pkg/cedar"
 	"github.com/mdhender/wraithe/pkg/cfg"
 	"github.com/mitchellh/go-homedir"
 	"github.com/spf13/cobra"
 	"log"
 	"math/rand"
+	"net/http"
 	"os"
 )
 
@@ -62,7 +67,24 @@ This application provides an API to the game engine.`,
 		return nil
 	},
 	Run: func(cmd *cobra.Command, args []string) {
-		// do nothing for the base command?
+		r := chi.NewRouter()
+
+		r.Use(middleware.RequestID)
+		r.Use(middleware.Logger)
+		r.Use(middleware.Recoverer)
+		r.Use(middleware.URLFormat)
+
+		r.Route("/api", func(r chi.Router) {
+			r.Mount("/", rest.Routes())
+		})
+		r.Route("/ui", func(r chi.Router) {
+			r.Mount("/", html.Routes())
+		})
+		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+			_, _ = w.Write([]byte("This is my index!"))
+		})
+
+		_ = http.ListenAndServe(":8080", r)
 	},
 }
 
