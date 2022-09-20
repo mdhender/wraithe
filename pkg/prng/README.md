@@ -1,5 +1,7 @@
 # PRNG
 
+PRNG provides generators to use for testing. 
+
 ## SFC32
 Code from // SFC32 is from https://simblob.blogspot.com/2022/05/upgrading-prng.html#more .
 
