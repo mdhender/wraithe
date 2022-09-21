@@ -74,14 +74,14 @@ This application provides an API to the game engine.`,
 		r.Use(middleware.Recoverer)
 		r.Use(middleware.URLFormat)
 
+		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
+			_, _ = w.Write([]byte("This is my index!"))
+		})
 		r.Route("/api", func(r chi.Router) {
 			r.Mount("/", rest.Routes())
 		})
 		r.Route("/ui", func(r chi.Router) {
 			r.Mount("/", html.Routes())
-		})
-		r.Get("/", func(w http.ResponseWriter, r *http.Request) {
-			_, _ = w.Write([]byte("This is my index!"))
 		})
 
 		_ = http.ListenAndServe(":8080", r)

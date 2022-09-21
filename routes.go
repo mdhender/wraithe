@@ -16,35 +16,27 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Package cfg implements a store for configuration data.
-package cfg
+package main
 
-// Config is the configuration data.
-// All fields are public.
-type Config struct {
-	Meta       Meta   `json:"meta"`
-	Home       string `json:"home"`
-	WorkingDir string `json:"working-dir"`
-	Server     Server `json:"server"`
-	PRNG       PRNG   `json:"prng"`
+import (
+	"fmt"
+	"net/http"
+)
+
+func (s *server) routes() *http.ServeMux {
+	mux := http.NewServeMux()
+	mux.HandleFunc("/", s.handleHome)
+
+	return mux
 }
 
-// Meta is meta-data about the configuration file.
-type Meta struct {
-	FileName string `json:"file-name,omitempty"`
-}
-
-// PRNG is configuration for random numbers
-type PRNG struct {
-	Seed int64
-}
-
-// Server is the configuration for the wraith server.
-type Server struct {
-	Http Http `json:"http"`
-}
-
-// Http is the configuration for the http server.
-type Http struct {
-	Port string `json:"port,omitempty"`
+func (s *server) handleHome(w http.ResponseWriter, r *http.Request) {
+	if r.URL.Path != "/" {
+		http.Error(w, http.StatusText(http.StatusNotFound), http.StatusNotFound)
+		return
+	} else if r.Method != "GET" {
+		http.Error(w, http.StatusText(http.StatusMethodNotAllowed), http.StatusMethodNotAllowed)
+		return
+	}
+	_, _ = fmt.Fprintf(w, "<title>Home</title><body><h1>Welcome")
 }
