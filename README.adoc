@@ -6,3 +6,26 @@ Rules are reverse-engineered from the _Empyrean Challenge_ player's manual,
 (c) 1978 Vern Holford.
 
 All flaws are, quite naturally, mine.
+
+== Setup
+The game takes place in a cluster of stars with a radius of about 15 light years.
+
+At the center of the cluster is a wormhole.
+
+== History
+During the climatic battle, the fleets of the AI, bio-enhanced, and "normal" nations fought.
+The bio-ships slipped through a wormhole to escape.
+
+After arrival, the bio-ships travelled to the nearest system with a suitable planet.
+The ships deposited their cryo-chambers and the modular kits required to establish a colony,
+then flew themselves into the sun.
+
+Some 24 generations later, the nations have organized themselves and reaching the limits of the
+planet's ability to support them.
+
+It is up to the players, as the leaders of their nations, to work with or compete against
+other nations to build fleets of ship to explore and colonize the remainder of the cluster.
+
+== Victory Conditions
+The winner is the player (or group of players) that controls the majority of the habitable worlds
+for four consecutive turns.
