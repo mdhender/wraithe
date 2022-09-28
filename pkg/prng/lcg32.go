@@ -18,27 +18,18 @@
 
 package prng
 
-// SFC32 is from https://simblob.blogspot.com/2022/05/upgrading-prng.html#more
-//
-// Example
-//
-//	sfc32 := prng.SFC32(0, 12345, 0, 1)
-//	for i := 0; i < 10; i++ {
-//		log.Println(sfc32())
-//	}
-func SFC32(a, b, c, d uint32) func() uint32 {
+// LCG32 is from open adventure, maybe?
+func LCG32(x uint32) func() uint32 {
+	x = x % 1048576
+
+	// generate and return the next value.
 	fn := func() uint32 {
-		t := (a + b) + d
-		d = d + 1
-		a = b ^ b>>9
-		b = c + (c << 3)
-		c = c<<21 | c>>11
-		c = c + t
-		return t
+		x = (x*1093 + 221587) % 1048576
+		return x<<21 | x>>11
 	}
 
-	// source recommends tossing first 12 outputs
-	for i := 0; i < 12; i++ {
+	// source recommends tossing the first output
+	for i := 0; i < 1; i++ {
 		fn()
 	}
 

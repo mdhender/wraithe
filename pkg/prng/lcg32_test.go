@@ -18,29 +18,20 @@
 
 package prng
 
-// SFC32 is from https://simblob.blogspot.com/2022/05/upgrading-prng.html#more
-//
-// Example
-//
-//	sfc32 := prng.SFC32(0, 12345, 0, 1)
-//	for i := 0; i < 10; i++ {
-//		log.Println(sfc32())
-//	}
-func SFC32(a, b, c, d uint32) func() uint32 {
-	fn := func() uint32 {
-		t := (a + b) + d
-		d = d + 1
-		a = b ^ b>>9
-		b = c + (c << 3)
-		c = c<<21 | c>>11
-		c = c + t
-		return t
+import "testing"
+
+func TestLCG(t *testing.T) {
+	lcg32 := LCG32(0)
+	for _, expect := range []uint32{1178599519, 564134195, 3263168954, 2665480396, 2227175438, 4196401256, 486539424, 56623112, 2604662946, 178258093} {
+		if got := lcg32(); got != expect {
+			t.Errorf("wanted %d: got %d\n", expect, got)
+		}
 	}
 
-	// source recommends tossing first 12 outputs
-	for i := 0; i < 12; i++ {
-		fn()
+	lcg32 = LCG32(1)
+	for _, expect := range []uint32{2573205670, 155189689, 2963276144, 1300234382, 367002109, 2545943034, 421527894, 2013266181, 2321547461, 4265607635} {
+		if got := lcg32(); got != expect {
+			t.Errorf("wanted %d: got %d\n", expect, got)
+		}
 	}
-
-	return fn
 }
