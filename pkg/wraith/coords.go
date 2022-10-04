@@ -16,14 +16,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-// Package wraith implements the game engine.
 package wraith
 
-type system struct {
-	ring   int
-	coords coords
-	stars  []*star
+import (
+	"fmt"
+	"math"
+)
+
+// coords are the location of a unit in the game.
+type coords struct {
+	x, y, z float64
 }
-type star struct {
-	system *system
+
+// distance returns the distance between two points
+func (c coords) distance(a coords) float64 {
+	dx, dy, dz := c.x-a.x, c.y-a.y, c.z-a.z
+	return math.Sqrt(dx*dx + dy*dy + dz*dz)
+}
+
+// roundToInt returns the coordinates rounded off
+func (c coords) roundToInt() coords {
+	return coords{x: math.Round(c.x), y: math.Round(c.y), z: math.Round(c.z)}
+}
+
+// xyz returns a string with the rounded coordinates
+func (c coords) xyz() string {
+	return fmt.Sprintf("%3d%3d%3d", int(math.Round(c.x)), int(math.Round(c.y)), int(math.Round(c.z)))
 }
