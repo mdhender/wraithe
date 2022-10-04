@@ -16,22 +16,5 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package prng
-
-// LCG32 is from open adventure, maybe?
-func LCG32(x uint32) PRNG {
-	x = x % 1048576
-
-	// generate and return the next value.
-	fn := func() uint32 {
-		x = (x*1093 + 221587) % 1048576
-		return x<<21 | x>>11
-	}
-
-	// source recommends tossing the first output
-	for i := 0; i < 1; i++ {
-		fn()
-	}
-
-	return fn
-}
+// Package wraith implements the game engine.
+package wraith

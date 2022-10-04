@@ -26,7 +26,7 @@ package prng
 //	for i := 0; i < 10; i++ {
 //		log.Println(sfc32())
 //	}
-func SFC32(a, b, c, d uint32) func() uint32 {
+func SFC32(a, b, c, d uint32) PRNG {
 	fn := func() uint32 {
 		t := (a + b) + d
 		d = d + 1

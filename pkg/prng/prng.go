@@ -16,22 +16,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+// Package prng implements a motley assortment of psuedo-random number generators.
 package prng
 
-// LCG32 is from open adventure, maybe?
-func LCG32(x uint32) PRNG {
-	x = x % 1048576
+// PRNG is a generator.
+type PRNG func() uint32
 
-	// generate and return the next value.
-	fn := func() uint32 {
-		x = (x*1093 + 221587) % 1048576
-		return x<<21 | x>>11
+func (p PRNG) Roll(n, d int) (result int) {
+	if n < 1 || d < 1 {
+		return 0
 	}
 
-	// source recommends tossing the first output
-	for i := 0; i < 1; i++ {
-		fn()
+	for ; n > 0; n-- {
+		result += int(p() % uint32(d))
 	}
 
-	return fn
+	return result
 }

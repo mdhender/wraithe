@@ -67,6 +67,10 @@ func main() {
 	log.Printf("%-30s == %d\n", "seed", seed)
 	rand.Seed(seed)
 
+	if err := cli.Execute(nil); err != nil {
+		log.Fatal(err)
+	}
+
 	c, err := cfg.Read(filepath.Join("testdata", "wraith.cfg"))
 	if err != nil {
 		log.Fatal(err)
