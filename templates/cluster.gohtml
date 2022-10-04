@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+<!DOCTYPE html>{{- /* mapping logic derived from // The drawing logic is derived from the article https://www.mamboleoo.be/articles/how-to-render-3d-in-2d-canvas */ -}}
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -23,32 +23,32 @@
 <script>
 	console.clear();
 
-	// Get the canvas element from the DOM
-	const canvas = document.querySelector('#scene');
+	const canvas = document.querySelector('#scene'); // Get the canvas element from the DOM
+
 	canvas.width = canvas.clientWidth;
 	canvas.height = canvas.clientHeight;
-	// Store the 2D context
-	const ctx = canvas.getContext('2d');
+
+	const ctx = canvas.getContext('2d'); // Store the 2D context
 
 	if (window.devicePixelRatio > 1) {
 		canvas.width = canvas.clientWidth * 2;
 		canvas.height = canvas.clientHeight * 2;
 		ctx.scale(2, 2);
 	}
-
-	/* ====================== */
-	/* ====== VARIABLES ===== */
-	/* ====================== */
+	{{- /* ====================== */
+	    /* ====== VARIABLES ===== */
+	    /* ====================== */ -}}
 	let width = canvas.clientWidth; // Width of the canvas
 	let height = canvas.clientHeight; // Height of the canvas
 	let rotation = 0; // Rotation of the globe
     let rotationTick = 0.0002; // How much to rotate each frame
 	let dots = []; // Every dot must be in this array
-
-	/* ====================== */
-	/* ====== CONSTANTS ===== */
-	/* ====================== */
-	/* Some of those constants may change if the user resizes their screen but I still strongly believe they belong to the Constants part of the variables */
+    {{- /* ====================== */
+	    /* ====== CONSTANTS ===== */
+	    /* ====================== */
+	    /* Some of those constants may change if the user resizes their
+	       screen but I still strongly believe they belong to the
+	       Constants part of the variables */ -}}
 	const DOTS_AMOUNT = 1000; // Amount of dots on the screen
 	const DOT_RADIUS = 4; // Radius of the dots
 	let GLOBE_RADIUS = width * 0.7; // Radius of the globe
@@ -61,51 +61,23 @@
 		constructor(ring, size, color, x, y, z) {
             this.size = size;
 			this.ring = ring;
-			this.fillStyle = color;
-			// // https://developer.mozilla.org/en-US/docs/Web/CSS/named-color
-			// switch (this.size) {
-			// 	case 0:					this.fillStyle = "aqua";					break;
-			// 	case 1:					this.fillStyle = "silver";					break;
-			// 	case 2:					this.fillStyle = "blue";					break;
-			// 	case 3:					this.fillStyle = "teal";					break;
-			// 	case 4:					this.fillStyle = "purple";					break;
-			// 	case 5:					this.fillStyle = "green";					break;
-			// 	case 6:					this.fillStyle = "red";					break;
-			// 	case 7:					this.fillStyle = "fuschia";					break;
-			// 	case 8:					this.fillStyle = "purple";					break;
-			// 	case 9:					this.fillStyle = "red";					break;
-			// 	case 10:					this.fillStyle = "maroon";					break;
-			// 	case 11:					this.fillStyle = "silver";					break;
-			// 	case 12:					this.fillStyle = "black";					break;
-			// 	case 13:					this.fillStyle = "grey";					break;
-            //     case 14:					this.fillStyle = "teal";					break;
-            //     case 15:					this.fillStyle = "blue";					break;
-			// 	default:
-			// 		this.fill = 'rgb(' + (Math.floor(Math.random() * 255)) + ', ' + (Math.floor(Math.random() * 255)) + ',' + (Math.floor(Math.random() * 255)) + ')';
-			// 		break;
-			// }
-
+			this.fillStyle = color; // 'rgb(' + (Math.floor(Math.random() * 255)) + ', ' + (Math.floor(Math.random() * 255)) + ',' + (Math.floor(Math.random() * 255)) + ')';
             // the div by 15 is an attempt to scale the cluster to fit the entire view port
 			this.x = GLOBE_RADIUS * x / 15.0;
 			this.y = GLOBE_RADIUS * y / 15.0;
 			this.z = GLOBE_RADIUS * z / 15.0 + GLOBE_CENTER_Z;
-
 			this.xProject = 0;
 			this.yProject = 0;
 			this.sizeProjection = 0;
 		}
-
-		// Do some math to project the 3D position into the 2D canvas
-		project(sin, cos) {
+		project(sin, cos) { // Do some math to project the 3D position into the 2D canvas
 			const rotX = cos * this.x + sin * (this.z - GLOBE_CENTER_Z);
 			const rotZ = -sin * this.x + cos * (this.z - GLOBE_CENTER_Z) + GLOBE_CENTER_Z;
 			this.sizeProjection = FIELD_OF_VIEW / (FIELD_OF_VIEW - rotZ);
 			this.xProject = (rotX * this.sizeProjection) + PROJECTION_CENTER_X;
 			this.yProject = (this.y * this.sizeProjection) + PROJECTION_CENTER_Y;
 		}
-
-		// Draw the dot on the canvas
-		draw(sin, cos) {
+		draw(sin, cos) { // Draw the dot on the canvas
 			this.project(sin, cos);
 			//ctx.fillRect(this.xProject - DOT_RADIUS, this.yProject - DOT_RADIUS, DOT_RADIUS * 2 * this.sizeProjection, DOT_RADIUS * 2 * this.sizeProjection);
 			ctx.fillStyle = this.fillStyle;
@@ -116,65 +88,31 @@
 		}
 	}
 
-	function createDots() {
-		// Empty the array of dots
-		dots.length = 0;
-		// Create a new dot based on the amount needed
-		for (let i = 0; i < DOTS_AMOUNT; i++) {
-			const theta = Math.random() * 2 * Math.PI; // Random value between [0, 2PI]
-			const phi = Math.acos((Math.random() * 2) - 1); // Random value between [-1, 1]
-
-			// Calculate the [x, y, z] coordinates of the dot along the globe
-			const x = GLOBE_RADIUS * Math.sin(phi) * Math.cos(theta);
-			const y = GLOBE_RADIUS * Math.sin(phi) * Math.sin(theta);
-			const z = (GLOBE_RADIUS * Math.cos(phi)) + GLOBE_CENTER_Z;
-			dots.push(new Dot(x, y, z));
-		}
-	}
-
 	function createStars() {
-		// empty the array of dots
-		dots.length = 0;
-
-		// center of sphere
-		//dots.push(new Dot(0, 0.0, 0.0, 0.0));
-
+		dots.length = 0; // empty the array of dots
+		dots.push(new Dot(0, 0.0, 0.0, 0.0)); // center of sphere
+		dots.push(new Dot(15, 0.0, -15.0, 0.0)); // north pole
+		dots.push(new Dot(15, 0.0, 15.0, 0.0)); // south pole
 		// systems
-      {{ range .Systems}}
-        dots.push(new Dot({{ .Ring }}, {{ .Size }}, {{ .Color }}, {{ .X }}, {{ .Y }}, {{ .Z }}));
-      {{ end }}
-
-		// north pole
-		//dots.push(new Dot(15, 0.0, -15.0, 0.0));
-
-		// south pole
-		//dots.push(new Dot(15, 0.0, 15.0, 0.0));
+      {{ range .Systems }}dots.push(new Dot({{ .Ring }}, {{ .Size }}, {{ .Color }}, {{ .X }}, {{ .Y }}, {{ .Z }}));{{ end }}
 	}
 
-	/* ====================== */
-	/* ======== RENDER ====== */
-	/* ====================== */
+    {{- /* ====================== */
+	    /* ======== RENDER ====== */
+	    /* ====================== */ -}}
 	function render(a) {
-		// Clear the scene
-		ctx.clearRect(0, 0, width, height);
-
-		// Increase the globe rotation
-		rotation = a * rotationTick;
-
+		ctx.clearRect(0, 0, width, height); // Clear the scene
+		rotation = a * rotationTick; // Increase the globe rotation
 		const sineRotation = Math.sin(rotation); // Sine of the rotation
 		const cosineRotation = Math.cos(rotation); // Cosine of the rotation
-
 		// Loop through the dots array and draw every dot
 		for (let i = 0; i < dots.length; i++) {
 			dots[i].draw(sineRotation, cosineRotation);
 		}
-
 		window.requestAnimationFrame(render);
 	}
 
-
-	// Function called after the user resized its screen
-	function afterResize() {
+	function afterResize() { // Function called after the user resized its screen
 		width = canvas.offsetWidth;
 		height = canvas.offsetHeight;
 		if (window.devicePixelRatio > 1) {
@@ -194,23 +132,16 @@
 		createStars(); // Reset all stars
 	}
 
-	// Variable used to store a timeout when user resized its screen
-	let resizeTimeout;
+	let resizeTimeout; // Variable used to store a timeout when user resized its screen
 
-	// Function called right after user resized its screen
-	function onResize() {
-		// Clear the timeout variable
-		resizeTimeout = window.clearTimeout(resizeTimeout);
-		// Store a new timeout to avoid calling afterResize for every resize event
-		resizeTimeout = window.setTimeout(afterResize, 500);
+	function onResize() { // Function called right after user resized its screen
+		resizeTimeout = window.clearTimeout(resizeTimeout); // Clear the timeout variable
+		resizeTimeout = window.setTimeout(afterResize, 500); // Store a new timeout to avoid calling afterResize for every resize event
 	}
 
 	window.addEventListener('resize', onResize);
-
 	createStars(); // Populate the dots array with random stars
-
-	// Render the scene
-	window.requestAnimationFrame(render);
+	window.requestAnimationFrame(render); // Render the scene
 </script>
 </body>
 </html>
